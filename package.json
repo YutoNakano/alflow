@@ -1,0 +1,46 @@
+{
+  "name": "alfred-gen",
+  "version": "1.0.0",
+  "description": "CLI tool to generate Alfred workflows programmatically",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "alfred-gen": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "alfred",
+    "workflow",
+    "macos",
+    "automation",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.0.0",
+    "archiver": "^7.0.0",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "plist": "^3.1.0",
+    "yaml": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/archiver": "^6.0.0",
+    "@types/node": "^20.0.0",
+    "@types/plist": "^3.0.5",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}
