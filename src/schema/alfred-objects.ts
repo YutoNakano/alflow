@@ -13,11 +13,13 @@ export const SCRIPT_LANGUAGE_TYPE = {
   bash: 0,
   zsh: 1,
   php: 2,
-  python: 3,
+  python2: 3,
   perl: 4,
   ruby: 5,
   applescript: 6,
   javascript: 7,
+  swift: 8,
+  python: 9,  // Python 3
 } as const;
 
 export type ScriptLanguageKey = keyof typeof SCRIPT_LANGUAGE_TYPE;

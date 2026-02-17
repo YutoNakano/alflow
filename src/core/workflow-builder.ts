@@ -5,6 +5,7 @@ import { generateInfoPlist } from './plist-generator.js';
 import { createWorkflowArchive, type ArchiveEntry } from './archive.js';
 import type { WorkflowConfig } from '../schema/workflow-config.js';
 import { isScriptAction } from '../schema/workflow-config.js';
+import { assertSafeScriptPath } from '../utils/path-validation.js';
 
 export interface BuildResult {
   outputPath: string;
@@ -49,6 +50,27 @@ export async function buildWorkflow(configPath: string): Promise<BuildResult> {
   };
 }
 
+export async function buildWorkflowFromConfig(
+  config: WorkflowConfig,
+  scripts: Map<string, string>,
+  outputDir: string,
+): Promise<BuildResult> {
+  const infoPlist = generateInfoPlist(config, scripts);
+
+  const entries: ArchiveEntry[] = [
+    { name: 'info.plist', content: infoPlist },
+  ];
+
+  const sanitizedName = config.name.replace(/[^a-zA-Z0-9-_]/g, '');
+  const outputPath = join(outputDir, `${sanitizedName}.alfredworkflow`);
+  await createWorkflowArchive(outputPath, entries);
+
+  return {
+    outputPath,
+    workflowName: config.name,
+  };
+}
+
 async function loadScripts(
   scriptsDir: string,
   config: WorkflowConfig
@@ -56,12 +78,14 @@ async function loadScripts(
   const scripts = new Map<string, string>();
 
   // Load input script
+  assertSafeScriptPath(config.input.script);
   const inputScriptPath = join(scriptsDir, config.input.script);
   const inputScript = await readFile(inputScriptPath, 'utf-8');
   scripts.set(config.input.script, inputScript);
 
   // Load action script if applicable
   if (isScriptAction(config.action)) {
+    assertSafeScriptPath(config.action.script);
     const actionScriptPath = join(scriptsDir, config.action.script);
     const actionScript = await readFile(actionScriptPath, 'utf-8');
     scripts.set(config.action.script, actionScript);

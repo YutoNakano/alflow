@@ -34,6 +34,7 @@ interface PlistData {
   objects: WorkflowObject[];
   connections: Record<string, Connection[]>;
   uidata: Record<string, UiData>;
+  variablesdontexport: string[];
 }
 
 export function generateInfoPlist(
@@ -127,6 +128,7 @@ export function generateInfoPlist(
     objects,
     connections,
     uidata,
+    variablesdontexport: [],
   };
 
   return plist.build(plistData as unknown as plist.PlistValue);
@@ -208,7 +210,7 @@ function createScriptFilterObject(
       escaping: 102,
       keyword: '',
       queuedelaycustom: 3,
-      queuedelayimmediatelyalinitiallyempty: true,
+      queuedelayimmediatelyinitially: true,
       queuedelaymode: 0,
       queuemode: 1,
       runningsubtext: '',

@@ -4,6 +4,7 @@ import { input, select, confirm } from '@inquirer/prompts';
 import chalk from 'chalk';
 import { stringify } from 'yaml';
 import { getScriptTemplate, getScriptExtension } from '../templates/scripts.js';
+import { assertSafeScriptPath } from '../utils/path-validation.js';
 import type {
   WorkflowConfig,
   TriggerConfig,
@@ -14,7 +15,12 @@ import type {
   ArgumentType,
 } from '../schema/workflow-config.js';
 
-export async function wizardCommand(): Promise<void> {
+export interface CollectedWorkflow {
+  config: WorkflowConfig;
+  scripts: Map<string, string>;
+}
+
+export async function collectWorkflowConfig(): Promise<CollectedWorkflow> {
   console.log(chalk.bold('\nAlfred Workflow Generator\n'));
 
   // Collect workflow metadata
@@ -171,32 +177,32 @@ export async function wizardCommand(): Promise<void> {
     config.description = description;
   }
 
-  // Create project directory
-  const projectDir = name.toLowerCase().replace(/\s+/g, '-');
-  const scriptsDir = join(projectDir, 'scripts');
+  // Build scripts map from templates
+  const scripts = new Map<string, string>();
+  scripts.set(scriptName, getScriptTemplate(language));
 
+  if (action.type === 'script') {
+    scripts.set(action.script, getScriptTemplate(action.language));
+  }
+
+  return { config, scripts };
+}
+
+export async function writeProjectFiles(
+  projectDir: string,
+  config: WorkflowConfig,
+  scripts: Map<string, string>,
+): Promise<void> {
+  const scriptsDir = join(projectDir, 'scripts');
   await mkdir(scriptsDir, { recursive: true });
 
   // Write workflow.yaml
   const yamlContent = stringify(config);
   await writeFile(join(projectDir, 'workflow.yaml'), yamlContent);
 
-  // Write script template
-  const scriptTemplate = getScriptTemplate(language);
-  await writeFile(join(scriptsDir, scriptName), scriptTemplate);
-
-  // Write action script if needed
-  if (actionType === 'script' && action.type === 'script') {
-    const actionTemplate = getScriptTemplate(action.language);
-    await writeFile(join(scriptsDir, action.script), actionTemplate);
+  // Write script files
+  for (const [name, content] of scripts) {
+    assertSafeScriptPath(name);
+    await writeFile(join(scriptsDir, name), content);
   }
-
-  console.log(chalk.green(`\nWorkflow created in ${chalk.bold(projectDir)}/`));
-  console.log(`
-Next steps:
-  1. Edit ${chalk.cyan(`${projectDir}/scripts/${scriptName}`)} with your script logic
-  2. Run ${chalk.cyan(`alfred-gen agent-prompt`)} in the project directory to get an AI prompt
-  3. Run ${chalk.cyan(`alfred-gen build`)} to generate the .alfredworkflow file
-  4. Double-click the generated file to install in Alfred
-`);
 }

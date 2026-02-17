@@ -1,21 +1,21 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { wizardCommand } from './commands/wizard.js';
+import { createCommand } from './commands/create.js';
 import { agentPromptCommand } from './commands/agent-prompt.js';
 import { buildCommand } from './commands/build.js';
 
 const program = new Command();
 
 program
-  .name('alfred-gen')
+  .name('alflow')
   .description('Generate Alfred workflows programmatically')
   .version('1.0.0');
 
 program
-  .command('wizard')
-  .description('Interactive CLI to create a new workflow')
-  .action(wizardCommand);
+  .command('create', { isDefault: true })
+  .description('Create a new workflow (interactive prompts + build)')
+  .action(createCommand);
 
 program
   .command('agent-prompt')
