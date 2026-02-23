@@ -36,6 +36,10 @@ alflow create
 
 That's it. `alflow create` walks you through the setup, writes a project directory, and builds the `.alfredworkflow` file in one step.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/YutoNakano/alflow/main/docs/demo.png" alt="alflow create demo" width="600" />
+</p>
+
 ## Commands
 
 ### `alflow create`
