@@ -5,7 +5,8 @@
 <h1 align="center">alflow</h1>
 
 <p align="center">
-  <strong>Generate Alfred workflows from YAML &mdash; with optional AI-powered scripts.</strong>
+  <em>Minimum action. Maximum leverage.</em><br>
+  <strong>Generate AI-powered Alfred workflows from idea to installed in one command.</strong>
 </p>
 
 <p align="center">
