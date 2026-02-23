@@ -22,7 +22,11 @@ alflow is a CLI that scaffolds [Alfred](https://www.alfredapp.com/) workflow pro
 ## Quick Start
 
 ```bash
-npm install -g git+https://github.com/YutoNakano/alflow.git
+git clone https://github.com/YutoNakano/alflow.git
+cd alflow
+npm install
+npm run build
+npm install -g .
 
 # Create a workflow (interactive prompts + optional AI script generation)
 alflow create
